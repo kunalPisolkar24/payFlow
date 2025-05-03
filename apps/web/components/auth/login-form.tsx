@@ -80,8 +80,7 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
   };
 
   return (
-    <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      
+    <div className="grid min-h-screen w-full lg:grid-cols-2">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div
           className="absolute inset-0 bg-zinc-900 bg-cover bg-center"
@@ -115,11 +114,10 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
         </motion.div>
       </div>
 
-
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+      <div className="flex items-center justify-center p-4 py-12 sm:p-8">
+        <div className="mx-auto flex w-full max-w-sm flex-col justify-center space-y-6">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700 relative">
               {error}
             </div>
           )}
@@ -128,7 +126,7 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
               Log in to your account
             </h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email and password below to access your account.
+              Enter your credentials to access your account.
             </p>
           </div>
           <Card>
@@ -162,7 +160,7 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
                     required
                   />
                 </div>
-                <div>
+                <div className="flex min-h-[75px] items-center justify-center">
                   <TurnstileComponent
                     siteKey="0x4AAAAAAA63Bocrdvuby7Jk"
                     onVerify={handleTurnstileVerify}
@@ -170,7 +168,6 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
                       console.error("Turnstile error:", error);
                       toast.error("Verification Error");
                     }}
-                    
                   />
                 </div>
               </CardContent>
