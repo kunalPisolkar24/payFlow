@@ -61,7 +61,7 @@ export const Navbar: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="hidden sm:flex"
+            className="hidden lg:flex"
           >
             <Sun className="h-5 w-5 rotate-0 scale-100 transition-transform dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-transform dark:rotate-0 dark:scale-100" />
@@ -69,11 +69,11 @@ export const Navbar: React.FC = () => {
           </Button>
 
           {/* Login Button */}
-          <Button variant="outline" className="rounded-xl h-[35px] hidden sm:flex" asChild>
+          <Button variant="outline" className="rounded-xl h-[35px] hidden lg:flex" asChild>
             <Link href="/login">Login</Link>
           </Button>
 
-          <Button className="rounded-xl h-[35px] hidden sm:flex" asChild>
+          <Button className="rounded-xl h-[35px] hidden lg:flex" asChild>
             <Link href="/signup">Sign Up</Link>
           </Button>
 

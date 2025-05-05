@@ -3,11 +3,13 @@ import { WalletCard } from "./wallet";
 
 export const TransferPage: React.FC = () => {
   return (
-    <div className="flex flex-col lg:flex-row lg:items-start lg:space-x-[70px] p-4 ">
-      <TransferForm />
-      <div className="w-2 h-5">
+    <div className="flex w-full flex-col lg:flex-row lg:justify-between gap-6 p-4 md:p-6 lg:p-8">
+      <div className="w-full lg:flex-1 lg:max-w-3xl">
+        <TransferForm />
       </div>
-      <WalletCard />
+      <div className="w-full lg:w-[500px] lg:flex-shrink-0"> 
+        <WalletCard />
+      </div>
     </div>
   );
 };

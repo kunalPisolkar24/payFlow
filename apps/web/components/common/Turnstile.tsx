@@ -1,41 +1,65 @@
 "use client";
 
 import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
-import { useRef, useState } from "react";
+import {
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 
 interface TurnstileComponentProps {
-  siteKey: string; 
+  siteKey: string;
   onVerify: (token: string) => void;
-  onError?: (error: any) => void; 
-  onExpire?: () => void; 
+  onError?: (error: any) => void;
+  onExpire?: () => void;
+  options?: { theme?: "light" | "dark" | "auto" };
 }
 
-export function TurnstileComponent({
-  siteKey,
-  onVerify,
-  onError,
-  onExpire,
-}: TurnstileComponentProps) {
-  const [token, setToken] = useState<string | null>(null);
-  const turnstileRef = useRef<TurnstileInstance>(null);
+export interface TurnstileRefActions {
+  reset: () => void;
+}
 
-  const handleSuccess = (token: string) => {
-    setToken(token);
-    onVerify(token);
+export const TurnstileComponent = forwardRef<
+  TurnstileRefActions,
+  TurnstileComponentProps
+>(({ siteKey, onVerify, onError, onExpire, options }, ref) => {
+  const [token, setToken] = useState<string | null>(null);
+  const turnstileInternalRef = useRef<TurnstileInstance>(null);
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      turnstileInternalRef.current?.reset();
+      setToken(null);
+    },
+  }));
+
+  const handleSuccess = (verifiedToken: string) => {
+    setToken(verifiedToken);
+    onVerify(verifiedToken);
   };
 
   const handleError = (error: any) => {
     console.error("Turnstile Error:", error);
+    setToken(null); 
     onError?.(error);
   };
 
+  const handleExpire = () => {
+    setToken(null);
+    onExpire?.();
+  }
+
   return (
     <Turnstile
-      ref={turnstileRef}
+      ref={turnstileInternalRef}
       siteKey={siteKey}
       onSuccess={handleSuccess}
       onError={handleError}
-      onExpire={onExpire}
+      onExpire={handleExpire}
+      options={options}
     />
   );
-}
+});
+
+TurnstileComponent.displayName = "TurnstileComponent"; 

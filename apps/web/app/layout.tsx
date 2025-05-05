@@ -18,13 +18,13 @@ export default function RootLayout({
         <body className={`${inter.className}`}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
             <Provider>
               {children}
-              <Toaster />
+              <Toaster richColors />
             </Provider>
           </ThemeProvider>
         </body>

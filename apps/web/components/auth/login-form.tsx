@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Wallet2 } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import { Label } from "@workspace/ui/components/label";
 import { useTheme } from "next-themes";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
-import { TurnstileComponent } from "@/components/common";
+import { TurnstileComponent, TurnstileRefActions } from "@/components/common";
 
 interface LoginFormProps {
   isLoading: boolean;
@@ -22,6 +22,11 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileRefActions>(null);
+
+  const resetTurnstile = () => {
+    turnstileRef.current?.reset();
+  };
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -30,6 +35,7 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
 
     if (!turnstileToken) {
       toast.error("Complete the Human Verification");
+      resetTurnstile();
       setIsLoading(false);
       return;
     }
@@ -60,16 +66,24 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
       });
 
       if (result?.error) {
-        setError(result.error);
-        toast.error(`Login Error ${result.error}`);
+        const errorMessage = result.error === "CredentialsSignin" ? "Invalid email or password." : `Login Error: ${result.error}`;
+        setError(errorMessage);
+        toast.error(errorMessage);
+        resetTurnstile();
       } else if (result?.ok) {
         toast.success("Login Successful!");
         window.location.href = "/dashboard";
+      } else {
+         setError("An unexpected issue occurred during login.");
+         toast.error("An unexpected issue occurred during login.");
+         resetTurnstile();
       }
     } catch (error: any) {
-      console.error("Login failed:", error);
-      setError(error.message || "An unexpected error occurred during login");
-      toast.error("An unexpected error occurred during login");
+      console.error("Login or verification failed:", error);
+      const errorMessage = error.message || "An unexpected error occurred";
+      setError(errorMessage);
+      toast.error(errorMessage);
+      resetTurnstile();
     } finally {
       setIsLoading(false);
     }
@@ -77,11 +91,24 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
 
   const handleTurnstileVerify = (token: string) => {
     setTurnstileToken(token);
+    setError(null);
   };
 
+  const handleTurnstileError = (error: any) => {
+    console.error("Turnstile error:", error);
+    toast.error("Verification Challenge Failed");
+    setError("Verification challenge failed. Please try again.");
+    setTurnstileToken(null);
+  };
+
+  const handleTurnstileExpire = () => {
+    setError("Verification expired. Please verify again.");
+    setTurnstileToken(null);
+  };
+
+
   return (
-    <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      
+    <div className="grid min-h-screen w-full lg:grid-cols-2">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div
           className="absolute inset-0 bg-zinc-900 bg-cover bg-center"
@@ -115,20 +142,24 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
         </motion.div>
       </div>
 
-
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+      <div className="flex items-center justify-center p-4 py-12 sm:p-8">
+        <div className="mx-auto flex w-full max-w-sm flex-col justify-center space-y-6">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <motion.div
+             initial={{ opacity: 0, y: -10 }}
+             animate={{ opacity: 1, y: 0 }}
+             className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700 relative"
+             role="alert"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
               Log in to your account
             </h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email and password below to access your account.
+              Enter your credentials to access your account.
             </p>
           </div>
           <Card>
@@ -139,7 +170,7 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
                   <Input
                     id="email"
                     name="email"
-                    placeholder="Enter your email"
+                    placeholder="m@example.com"
                     type="email"
                     autoCapitalize="none"
                     autoComplete="email"
@@ -153,7 +184,7 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
                   <Input
                     id="password"
                     name="password"
-                    placeholder="Enter your password"
+                    placeholder="••••••••"
                     type="password"
                     autoCapitalize="none"
                     autoComplete="current-password"
@@ -162,27 +193,26 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
                     required
                   />
                 </div>
-                <div>
+                <div className="flex min-h-[75px] items-center justify-center">
                   <TurnstileComponent
-                    siteKey="0x4AAAAAAA63Bocrdvuby7Jk"
+                    ref={turnstileRef}
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
                     onVerify={handleTurnstileVerify}
-                    onError={(error: any) => {
-                      console.error("Turnstile error:", error);
-                      toast.error("Verification Error");
-                    }}
-                    
+                    onError={handleTurnstileError}
+                    onExpire={handleTurnstileExpire}
+                    options={{ theme: resolvedTheme === "dark" ? "dark" : "light" }}
                   />
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col gap-4 pt-4">
-                <Button className="w-full" type="submit" disabled={isLoading}>
+                <Button className="w-full" type="submit" disabled={isLoading || !turnstileToken}>
                   {isLoading ? "Logging in..." : "Log In"}
                 </Button>
                 <Button
                   variant="outline"
                   type="button"
                   className="w-full"
-                  disabled={isSubmitting}
+                  disabled={isLoading}
                   onClick={() =>
                     signIn("google", {
                       callbackUrl: "/dashboard",
@@ -191,12 +221,8 @@ export function LoginForm({ isLoading: isSubmitting }: LoginFormProps) {
                 >
                   <svg
                     className="mr-2 h-4 w-4"
+                    aria-hidden="true"
                     viewBox="0 0 24 24"
-                    fill={
-                      resolvedTheme === "dark"
-                        ? "var(--primary-foreground)"
-                        : "var(--primary)"
-                    }
                   >
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

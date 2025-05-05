@@ -79,7 +79,7 @@ export default function ApiDocs(): JSX.Element {
     <>
     <Navbar/>
     <SwaggerErrorBoundary>
-      <div className="swagger-container">
+      <div className="swagger-container py-10">
         <SwaggerUI url="/api/docs" />
       </div>
     </SwaggerErrorBoundary>

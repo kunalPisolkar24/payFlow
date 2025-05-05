@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
 import { Wallet2 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardFooter } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
@@ -17,9 +17,7 @@ interface SignUpFormProps {
   isLoading: boolean;
 }
 
-export function SignUpForm({
-  isLoading: isSubmitting,
-}: SignUpFormProps) {
+export function SignUpForm({ isLoading: isSubmitting }: SignUpFormProps) {
   const { resolvedTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +102,7 @@ export function SignUpForm({
   };
 
   return (
-    <div className="container relative min-h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+    <div className="grid min-h-screen w-full lg:grid-cols-2">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div
           className="absolute inset-0 bg-zinc-900 bg-cover bg-center"
@@ -136,11 +134,11 @@ export function SignUpForm({
           </blockquote>
         </motion.div>
       </div>
-    
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-4 sm:w-[350px]">
+
+      <div className="flex items-center justify-center p-4 py-12 sm:p-8">
+        <div className="mx-auto flex w-full max-w-sm flex-col justify-center space-y-4">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700 relative">
               {error}
             </div>
           )}
@@ -149,7 +147,7 @@ export function SignUpForm({
               Create an account
             </h1>
             <p className="text-sm text-muted-foreground">
-              Start your 30-day free trial. No credit card required.
+              Join in seconds. Pay in moments
             </p>
           </div>
           <Card>
@@ -201,7 +199,7 @@ export function SignUpForm({
                     Must be at least 8 characters.
                   </p>
                 </div>
-                <div>
+                <div className="flex min-h-[75px] items-center justify-center">
                   <TurnstileComponent
                     siteKey="0x4AAAAAAA63Bocrdvuby7Jk"
                     onVerify={handleTurnstileVerify}
