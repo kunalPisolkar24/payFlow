@@ -132,7 +132,7 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="mt-16 pt-8 border-t">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© 2024 PayFlow. All rights reserved.</p>
+            <p>© 2025 PayFlow. All rights reserved.</p>
             <div className="flex items-center gap-4">
               <Link href="#" className="hover:text-foreground transition-colors">
                 Terms

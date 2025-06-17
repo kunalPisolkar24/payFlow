@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Wallet2 } from 'lucide-react'
+import { Wallet2, ArrowRight } from 'lucide-react'
 import Link from "next/link"
 
 import { Button } from "@workspace/ui/components/button";
@@ -76,7 +76,7 @@ export function Hero() {
             className="space-y-2"
           >
             <Button size="lg" asChild>
-              <Link href="/signup">Start your free trial</Link>
+              <Link href="/signup">Get Started ! <ArrowRight className="size-5 mr-[-10px]" /> </Link>
             </Button>
             <p className="text-xs text-muted-foreground md:visible">
               Powered by advanced Web technology

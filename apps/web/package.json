@@ -54,6 +54,7 @@
     "@vitest/ui": "^3.1.2",
     "@workspace/eslint-config": "workspace:^",
     "@workspace/typescript-config": "workspace:*",
+    "cypress": "^14.4.1",
     "jsdom": "^26.1.0",
     "postcss": "^8",
     "prisma": "^6.7.0",
