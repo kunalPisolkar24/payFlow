@@ -1,0 +1,47 @@
+replicaCount: 1
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 3
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+app:
+  config:
+    databaseUrl: ""
+    googleClientId: ""
+    googleClientSecret: ""
+    nextauthSecret: "my_secret_password"
+    nextauthUrl: "http://localhost"
+    upstashRedisRestUrl: ""
+    upstashRedisRestToken: ""
+    turnstileSecretKey: ""
+    nextPublicTurnstileSiteKey: ""
+
+migration:
+  enabled: true
+
+monitoring:
+  enabled: true
+
+prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: standard
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 10Gi
+  grafana:
+    persistence:
+      enabled: true
+      storageClassName: standard
+      size: 10Gi
