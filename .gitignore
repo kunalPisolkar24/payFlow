@@ -34,3 +34,8 @@ npm-debug.log*
 # Misc
 .DS_Store
 *.pem
+
+# Helm
+payflow-chart/values.staging.yaml
+payflow-chart/values.production.yaml
+payflow-chart/charts/
