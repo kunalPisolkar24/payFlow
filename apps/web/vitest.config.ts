@@ -17,6 +17,31 @@ export default defineConfig({
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
     ],
+    coverage: {
+      provider: 'v8',
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/build/**',
+        '**/.next/**',
+        '**/cypress/**',
+        '**/.{idea,git,cache,output,temp}/**',
+        '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
+        '**/index.ts',
+        '**/index.js',
+        'vitest.setup.ts',
+        '**/*.d.ts',
+        '**/page.tsx',
+        '**/*.mjs',
+        '**/components/**',
+        'eslint.config.js',
+        'middleware.ts',
+        'tailwind.config.ts',
+        '**/layout.tsx',
+        'config/**',
+        'lib/**'
+      ],
+    },
     alias: {
       '@': path.resolve(__dirname, '.'),
       '@workspace/ui': path.resolve(__dirname, '../../packages/ui/src')

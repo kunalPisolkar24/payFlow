@@ -8,12 +8,17 @@ import { Label } from "@workspace/ui/components/label";
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { WalletCardSkeleton } from '@/components/skeletons';
 
 export function WalletCard() {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [balance, setBalance] = useState<string | null>(null); // Store balance as string
+  const [balance, setBalance] = useState<string | null>(null);
   const { data: session } = useSession();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -22,29 +27,23 @@ export function WalletCard() {
           const response = await fetch(`/api/wallet/balance?email=${session.user.email}`);
           if (response.ok) {
             const data = await response.json();
-            setBalance(data.balance); // Balance is already a string from the API
+            setBalance(data.balance);
           } else {
-            console.error("Failed to fetch balance");
-            setBalance("0.00"); // Handle error, set default balance
+            setBalance("0.00");
           }
         } catch (error) {
-          console.error("Error fetching balance:", error);
-          setBalance("0.00"); // Handle error, set default balance
+          setBalance("0.00");
         }
       }
     };
 
-    if (session?.user?.email) {
+    if (mounted && session?.user?.email) {
       fetchBalance();
     }
-  }, [session]);
+  }, [session, mounted]);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
+  if (!mounted || balance === null) {
+    return <WalletCardSkeleton />;
   }
 
   return (
@@ -94,8 +93,7 @@ export function WalletCard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              {/* Display balance with 2 decimal places */}
-              {balance !== null ? `$${parseFloat(balance).toFixed(2)}` : "$0.00"}
+              {`$${parseFloat(balance).toFixed(2)}`}
             </motion.p>
           </div>
         </motion.div>

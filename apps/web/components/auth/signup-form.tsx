@@ -201,7 +201,7 @@ export function SignUpForm({ isLoading: isSubmitting }: SignUpFormProps) {
                 </div>
                 <div className="flex min-h-[75px] items-center justify-center">
                   <TurnstileComponent
-                    siteKey="0x4AAAAAAA63Bocrdvuby7Jk"
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
                     onVerify={handleTurnstileVerify}
                     onError={(error: any) => {
                       console.error("Turnstile error:", error);
